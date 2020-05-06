@@ -46,15 +46,13 @@ A aplicação ficará disponível em <http://localhost:3000/>, considerando que 
 
 + Slack: comunica��o entre os participantes
 + Issue tracker: registro de problemas no pr�prio gitlab, ao menos por enquanto
-+ Controle de vers�o: no gitlab (**n�o compartilhar em outro local**!)
 
 ## Tarefas
 
 + **Gabriel**: interface com a API IBGE em <https://servicodados.ibge.gov.br/api/docs>
 + **Luis**: interface com a API REST do CEPESP.io em <https://github.com/Cepesp-Fgv/cepesp-rest>
 + **Ricardo**: projeto da solu��o e a API de consultas.
-+ **Marco**: a definir
-+ **Dimas**: a definir
+
 
 ## Manuais que podem ajudar
 
