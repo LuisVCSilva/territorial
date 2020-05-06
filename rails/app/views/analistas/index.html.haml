@@ -1,0 +1,106 @@
+%h1 Analista Político
+
+%p Análises orientadas ao cientista político
+
+%div.alert.alert-dismissible.alert-warning
+   %button.close{ :type => "button",  :data-dismiss => "alert"}
+   %h4.alert-heading Atenção: Funcionalidades não Implementadas!
+   %p.mb-0
+      %strong As funcionalidades da página do analista não foram completamente implementadas e por isso devem sem desconsideradas.
+
+%div{:id =>"map", :style =>"width: 600px; height: 400px;"}
+
+:javascript
+   var map = L.map('map').setView([-15.7253862,-47.9304935], 5);
+
+   var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+   var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+
+
+   L.tileLayer(osmUrl, { maxZoom: 10, attribution: osmAttrib, id: 'mapbox.streets' }).addTo(map);
+
+   macros = #{@macros_geojson.to_json.html_safe}
+
+   var myStyle = { "color": "#ff7800", "weight": 3, "opacity": 0.85 };
+
+   for (id_macro in macros) {
+      L.geoJSON(macros[id_macro], {style: myStyle}).addTo(map);
+   }
+
+   // StatesData esta sendo declardo dentro de app/assets/javascripts/analista/brasil_geo.js
+   L.geoJSON(statesData, {style: myStyle}).addTo(map);
+   // Retorna a cor de acordo com a densidade populacional
+
+
+   #{leaflet_function_getcolor()}
+   #{leaflet_function_style("density")}
+   #{leaflet_function_legenda("map")}
+   #{leaflet_create_info("map", "Votos por Região", "density", "votos", mensagem_adicional="")}
+
+   var geojson = L.geoJson(statesData, {
+      style: style,
+   }).addTo(map);
+
+   geojson = L.geoJson(statesData, {
+      style: style,
+      onEachFeature: onEachFeature
+   }).addTo(map);
+
+
+
+%h2 Filtragem por Localização
+
+%ul
+- @territorios.each do |id, territorio|
+   %a{:href => "?#{territorio.id}"}
+      %button.btn.btn-outline-primary{:type => "button"}="#{territorio.nome}"
+
+%h2 Filtragem por Indicadores Disponíveis
+
+Filtragem de localizacao por indicadores sociais e econômicos (fonte: IBGE).
+
+%ol
+- @indicadores.each do | indicador, id|
+   %a{:href => ""}
+      %button.btn.btn-primary{:type => "button"}="#{indicador.to_s}"
+
+%h2 Cidades Analisadas em #{@estado.nome}
+
+/%p Filtro por %input{:type=>"range", :min => "5", :max => "10", :step=>"0.01"}
+
+%ul.list-group
+- @geojson[@estado.id][:indicador].each do |key_cidade, cidade|
+   -cidade.each do |key_indicador, dados_cidade|
+      %li.list-group-item.d-flex.justify-content-between.align-items-center
+         #{@municipios[key_cidade.to_s].nome}
+         -dados_cidade.dados.each do |key_ano, dado_indicador|
+            %span.badge.badge-primary.badge-pill="#{key_ano} - #{dado_indicador.to_s}"
+
+/
+/%h2 Sequência de ações
+/
+/%ol
+/   %li aparece o mapa
+/   %li Filtro Localizacao: selecionar qual tipo de escopo de localização está interessado: brasil, macroregião, estados (limitar até municipio?)
+/   %li selecionar qual a localizacao em que está interessado ()
+/   %li Filtro granularidade: pode refinar o escopo, depois disso (imediatamente inferior): granularidade?.
+/   %li aparece embaixo a lista de regiões/locais selecionados (resumo, de número)
+/   %li filtragem adicional considerando indicadores
+/   %li pequeno mapa mostrando a idéia dos indicadores no Brasil ou região selecionada (gráfico)
+/   %li aparece o slider e características estatísticas do indicador (com lista de lugares selecionados, e recuperação das características estatísticas do local)
+/   %li slides com posição dos Q1, Q2 e Q3.
+/   %li permitir voltar ao mapa para visualização rápida dos valores de Q1, Q2 e Q3 (mostrar no mapa abaixo)
+/   %li na medida em que varia o slider, seleciona apenas alguns municipios (inicia na posição final). mudar por valor ou botões
+/   %li acrescentar indicadores (filtragem adicional) - vale a pena E, OU?, conjunto invertido
+/   %li lugares selecionados para novo indicador, usando <strong>cor diferente</strong>!
+/   %li botão: ok, processar
+/   %li tipo de eleição
+/   %li pode aparecer de lugares diferentes!
+/   %li mostrar candidatos de maneira parecida (eleitos ou não)
+/   %li indicar  quando resultado é relativo (<strong>como acrescentar estatisticas</strong>)
+/   %li quando passar o cursor no candidato, mostra rrapidamente uma estatíestatisticas
+/   %li permitir diversas estatísticas??
+
+/#h2 Comparação entre candidatos
+
+/#h2 Animação dos dados temporais
